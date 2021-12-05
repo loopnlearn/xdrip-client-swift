@@ -1,3 +1,3 @@
 files:
-  - source: xDripClientUI/Base.lproj/Localizable.strings
+  - source: /xDripClientUI/Base.lproj/Localizable.strings
     translation: /xDripClientUI/%osx_locale%.lproj/Localizable.strings
