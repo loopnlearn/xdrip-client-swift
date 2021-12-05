@@ -39,7 +39,7 @@ public class xDripClientManager: CGMManager {
     
     public static let localizedTitle = LocalizedString("xDrip4iO5", comment: "Title for the CGMManager option")
 
-    public let appURL: URL? = URL(string: "xdrip://")
+    public let appURL: URL? = URL(string: "xdripswift://")
 
     public var cgmManagerDelegate: CGMManagerDelegate? {
         get {
