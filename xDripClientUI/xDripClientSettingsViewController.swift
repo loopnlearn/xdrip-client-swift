@@ -10,7 +10,7 @@ import HealthKit
 import LoopKit
 import LoopKitUI
 import xDripClient
-
+import MessageUI
 
 public class xDripClientSettingsViewController: UITableViewController {
     
@@ -45,9 +45,14 @@ public class xDripClientSettingsViewController: UITableViewController {
         
         tableView.register(SettingsTableViewCell.self, forCellReuseIdentifier: SettingsTableViewCell.className)
         tableView.register(TextButtonTableViewCell.self, forCellReuseIdentifier: TextButtonTableViewCell.className)
+        tableView.register(TextFieldTableViewCell.self, forCellReuseIdentifier: TextFieldTableViewCell.className)
         
         let button = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(doneTapped(_:)))
         self.navigationItem.setRightBarButton(button, animated: false)
+        
+        // add observer for heartBeatState, this is a text that will be shown in the heartBeat section. We need to observe the value
+        UserDefaults.standard.addObserver(self, forKeyPath: UserDefaults.Key.heartBeatState.rawValue, options: .new, context: nil)
+
     }
     
     @objc func doneTapped(_ sender: Any) {
@@ -60,10 +65,32 @@ public class xDripClientSettingsViewController: UITableViewController {
         }
     }
     
+    // override to observe useCGMAsHeartbeat and keyForcgmTransmitterDeviceAddressInSharedUserDefaults
+    public override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+        
+        if let keyPath = keyPath {
+            
+            if let keyPathEnum = UserDefaults.Key(rawValue: keyPath) {
+                
+                switch keyPathEnum {
+                    
+                case UserDefaults.Key.heartBeatState :
+                    tableView.reloadData()
+                    
+                default:
+                    break
+                }
+                
+            }
+        }
+    }
+
     // MARK: - UITableViewDataSource
     
     private enum Section: Int, CaseIterable {
         case latestReading
+        case heartbeat
+        case sendIssueReport
         case delete
     }
     
@@ -77,11 +104,19 @@ public class xDripClientSettingsViewController: UITableViewController {
         case trend
     }
     
+    private enum HeartBeatRow: Int, CaseIterable {
+        case useCgmAsHeartbeat
+    }
+    
     override public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch Section(rawValue: section)! {
         case .latestReading:
             return LatestReadingRow.allCases.count
+        case .heartbeat:
+            return HeartBeatRow.allCases.count
         case .delete:
+            return 1
+        case .sendIssueReport:
             return 1
         }
     }
@@ -105,6 +140,8 @@ public class xDripClientSettingsViewController: UITableViewController {
         case .latestReading:
             let cell = tableView.dequeueReusableCell(withIdentifier: SettingsTableViewCell.className, for: indexPath) as! SettingsTableViewCell
             let glucose = cgmManager.latestBackfill
+            
+            cell.accessoryView = nil
             
             switch LatestReadingRow(rawValue: indexPath.row)! {
             case .glucose:
@@ -138,14 +175,61 @@ public class xDripClientSettingsViewController: UITableViewController {
             cell.tintColor = .delete
             cell.isEnabled = true
             return cell
+            
+        case .heartbeat:
+            
+            switch HeartBeatRow(rawValue: indexPath.row)! {
+            case .useCgmAsHeartbeat:
+                
+                // row to enable or disable use CGM as heartbeat.
+                // shows text + UISwitch
+                
+                let cell = tableView.dequeueReusableCell(withIdentifier: SettingsTableViewCell.className, for: indexPath) as! SettingsTableViewCell
+                cell.textLabel?.text = LocalizedString("Use CGM as heartbeat", comment: "The title text for the cgm heartbeat enabled switch cell")
+                
+                // create UISwitch to toggle the value of UserDefaults.standard.useCGMAsHeartbeat
+                let useCgmAsHeartBeatUISwitch  = UISwitch(frame: CGRect.zero) as UISwitch
+                useCgmAsHeartBeatUISwitch.isOn = UserDefaults.standard.useCGMAsHeartbeat
+                useCgmAsHeartBeatUISwitch.addTarget(self, action: #selector(switchTriggered), for: .valueChanged)
+                useCgmAsHeartBeatUISwitch.tag = indexPath.row
+                
+                cell.accessoryView = useCgmAsHeartBeatUISwitch
+                return cell
+                
+            }
+            
+        case .sendIssueReport:
+            
+            let cell = tableView.dequeueReusableCell(withIdentifier: TextButtonTableViewCell.className, for: indexPath) as! TextButtonTableViewCell
+            
+            cell.textLabel?.text = LocalizedString("Send Issue Report", comment: "Title text for the button to send issue report")
+            cell.textLabel?.textAlignment = .center
+            cell.isEnabled = true
+            return cell
+            
         }
+    }
+    
+    public override func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
+        switch Section(rawValue: section)! {
+            
+        case .heartbeat:
+            return UserDefaults.standard.heartBeatState
+        default:
+            return nil
+        }
+        
     }
     
     public override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch Section(rawValue: section)! {
         case .latestReading:
-            return LocalizedString("Latest Reading", comment: "Section title for latest glucose reading")
+            return LocalizedString("Heartbeat", comment: "Section title for heartbeat info")
         case .delete:
+            return nil
+        case .heartbeat:
+            return LocalizedString("Use CGM as heartbeat", comment: "The title text for the cgm heartbeat enabled switch cell")
+        case .sendIssueReport:
             return nil
         }
     }
@@ -166,8 +250,41 @@ public class xDripClientSettingsViewController: UITableViewController {
             present(confirmVC, animated: true) {
                 tableView.deselectRow(at: indexPath, animated: true)
             }
+        case .heartbeat:
+            break
+            
+        case .sendIssueReport:
+            
+            // check if iOS device can send email, this depends of an email account is configured
+            if MFMailComposeViewController.canSendMail() {
+
+                let mail = MFMailComposeViewController()
+                mail.mailComposeDelegate = self
+            
+                mail.setToRecipients([ConstantsxDripClient.traceFileDestinationAddress])
+                mail.setMessageBody("Problem Description: ", isHTML: true)
+                
+                // add all trace files as attachment
+                let traceFilesInData = Trace.getTraceFilesInData()
+                for (index, traceFileInData) in traceFilesInData.0.enumerated() {
+                    mail.addAttachmentData(traceFileInData as Data, mimeType: "text/txt", fileName: traceFilesInData.1[index])
+                }
+                
+                present(mail, animated: true, completion: nil)
+
+            } else {
+                
+                present(UIAlertController(title: "Warning", message: "You must configure an e-mail account on your iOS device.", preferredStyle: .alert), animated: true)
+                
+            }
+
         }
     }
+    
+    @objc private func switchTriggered(sender: UISwitch) {
+        UserDefaults.standard.useCGMAsHeartbeat = sender.isOn
+    }
+    
 }
 
 
@@ -190,4 +307,14 @@ private extension UIAlertController {
         let cancel = LocalizedString("Cancel", comment: "The title of the cancel action in an action sheet")
         addAction(UIAlertAction(title: cancel, style: .cancel, handler: nil))
     }
+}
+
+extension xDripClientSettingsViewController: MFMailComposeViewControllerDelegate {
+    
+    public func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
+        
+        controller.dismiss(animated: true)
+        
+    }
+    
 }
