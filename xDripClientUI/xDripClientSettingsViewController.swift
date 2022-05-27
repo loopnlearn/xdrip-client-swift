@@ -90,6 +90,7 @@ public class xDripClientSettingsViewController: UITableViewController {
     private enum Section: Int, CaseIterable {
         case latestReading
         case heartbeat
+        case syncToRemoveService
         case sendIssueReport
         case delete
     }
@@ -108,12 +109,18 @@ public class xDripClientSettingsViewController: UITableViewController {
         case useCgmAsHeartbeat
     }
     
+    private enum SyncToRemoteServiceRow: Int, CaseIterable {
+        case shouldSyncToRemoveService
+    }
+    
     override public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch Section(rawValue: section)! {
         case .latestReading:
             return LatestReadingRow.allCases.count
         case .heartbeat:
             return HeartBeatRow.allCases.count
+        case .syncToRemoveService:
+            return SyncToRemoteServiceRow.allCases.count
         case .delete:
             return 1
         case .sendIssueReport:
@@ -178,26 +185,36 @@ public class xDripClientSettingsViewController: UITableViewController {
             
         case .heartbeat:
             
-            switch HeartBeatRow(rawValue: indexPath.row)! {
-            case .useCgmAsHeartbeat:
-                
-                // row to enable or disable use CGM as heartbeat.
-                // shows text + UISwitch
-                
-                let cell = tableView.dequeueReusableCell(withIdentifier: SettingsTableViewCell.className, for: indexPath) as! SettingsTableViewCell
-                cell.textLabel?.text = LocalizedString("Use CGM as heartbeat", comment: "The title text for the cgm heartbeat enabled switch cell")
-                
-                // create UISwitch to toggle the value of UserDefaults.standard.useCGMAsHeartbeat
-                let useCgmAsHeartBeatUISwitch  = UISwitch(frame: CGRect.zero) as UISwitch
-                useCgmAsHeartBeatUISwitch.isOn = UserDefaults.standard.useCGMAsHeartbeat
-                useCgmAsHeartBeatUISwitch.addTarget(self, action: #selector(switchTriggered), for: .valueChanged)
-                useCgmAsHeartBeatUISwitch.tag = indexPath.row
-                
-                cell.accessoryView = useCgmAsHeartBeatUISwitch
-                return cell
-                
-            }
+            // row to enable or disable use CGM as heartbeat.
+            // shows text + UISwitch
             
+            let cell = tableView.dequeueReusableCell(withIdentifier: SettingsTableViewCell.className, for: indexPath) as! SettingsTableViewCell
+            cell.textLabel?.text = LocalizedString("Use CGM as heartbeat", comment: "The title text for the cgm heartbeat enabled switch cell")
+            
+            // create UISwitch to toggle the value of UserDefaults.standard.useCGMAsHeartbeat
+            let useCgmAsHeartBeatUISwitch  = UISwitch(frame: CGRect.zero) as UISwitch
+            useCgmAsHeartBeatUISwitch.isOn = UserDefaults.standard.useCGMAsHeartbeat
+            useCgmAsHeartBeatUISwitch.addTarget(self, action: #selector(useCGMAsHeartbeatSwitchTriggered), for: .valueChanged)
+            useCgmAsHeartBeatUISwitch.tag = indexPath.row
+            
+            cell.accessoryView = useCgmAsHeartBeatUISwitch
+            return cell
+
+        case .syncToRemoveService:
+            
+            // row to enable or disable sync to remote service
+            let cell = tableView.dequeueReusableCell(withIdentifier: SettingsTableViewCell.className, for: indexPath) as! SettingsTableViewCell
+            cell.textLabel?.text = LocalizedString("Loop should sync to remote service", comment: "The title text for sync to remote service enabled switch cell")
+            
+            // create UISwitch to toggle the value of UserDefaults.standard.shouldSyncToRemoteService
+            let shouldSyncToRemoteServiceUISwitch  = UISwitch(frame: CGRect.zero) as UISwitch
+            shouldSyncToRemoteServiceUISwitch.isOn = UserDefaults.standard.shouldSyncToRemoteService
+            shouldSyncToRemoteServiceUISwitch.addTarget(self, action: #selector(shouldSyncToRemoteServiceSwitchTriggered), for: .valueChanged)
+            shouldSyncToRemoteServiceUISwitch.tag = indexPath.row
+            
+            cell.accessoryView = shouldSyncToRemoteServiceUISwitch
+            return cell
+
         case .sendIssueReport:
             
             let cell = tableView.dequeueReusableCell(withIdentifier: TextButtonTableViewCell.className, for: indexPath) as! TextButtonTableViewCell
@@ -224,13 +241,15 @@ public class xDripClientSettingsViewController: UITableViewController {
     public override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch Section(rawValue: section)! {
         case .latestReading:
-            return LocalizedString("Heartbeat", comment: "Section title for heartbeat info")
+            return LocalizedString("Latest Reading", comment: "Section title for latest glucose reading")
         case .delete:
             return nil
         case .heartbeat:
-            return LocalizedString("Use CGM as heartbeat", comment: "The title text for the cgm heartbeat enabled switch cell")
+            return LocalizedString("Heartbeat", comment: "Section title for heartbeat info")
         case .sendIssueReport:
             return nil
+        case .syncToRemoveService:
+            return LocalizedString("Sync", comment: "Section title for sync to remote service section")
         }
     }
     
@@ -251,6 +270,9 @@ public class xDripClientSettingsViewController: UITableViewController {
                 tableView.deselectRow(at: indexPath, animated: true)
             }
         case .heartbeat:
+            break
+            
+        case .syncToRemoveService:
             break
             
         case .sendIssueReport:
@@ -281,10 +303,14 @@ public class xDripClientSettingsViewController: UITableViewController {
         }
     }
     
-    @objc private func switchTriggered(sender: UISwitch) {
+    @objc private func useCGMAsHeartbeatSwitchTriggered(sender: UISwitch) {
         UserDefaults.standard.useCGMAsHeartbeat = sender.isOn
     }
     
+    @objc private func shouldSyncToRemoteServiceSwitchTriggered(sender: UISwitch) {
+        UserDefaults.standard.shouldSyncToRemoteService = sender.isOn
+    }
+
 }
 
 

@@ -36,7 +36,7 @@ public class xDripClientManager: NSObject, CGMManager {
 
         // add observer for useCGMAsHeartbeat - this is a user setting. If user enables/disables, then the bluetoothTransmitter must be initialized or set to nil
         UserDefaults.standard.addObserver(self, forKeyPath: UserDefaults.Key.useCGMAsHeartbeat.rawValue, options: .new, context: nil)
-        
+
         // possibly cgmTransmitterDeviceAddess in shared user defaults has been changed by xDrip4iOS while Loop was not running. Reassign the value in UserDefaults
         UserDefaults.standard.cgmTransmitterDeviceAddress = client?.cgmTransmitterDeviceAddressInSharedUserDefaults
         
@@ -91,10 +91,18 @@ public class xDripClientManager: NSObject, CGMManager {
     
     public let delegate = WeakSynchronizedDelegate<CGMManagerDelegate>()
     
-    public var providesBLEHeartbeat = true
-
-    public let shouldSyncToRemoteService = true
+    public var shouldSyncToRemoteService: Bool {
+        get {
+            return UserDefaults.standard.shouldSyncToRemoteService
+        }
+    }
     
+    public var providesBLEHeartbeat: Bool {
+        get {
+            return UserDefaults.standard.useCGMAsHeartbeat
+        }
+    }
+
     private var requestReceiver: Cancellable?
 
     public var sensorState: SensorDisplayable? {
@@ -243,8 +251,6 @@ public class xDripClientManager: NSObject, CGMManager {
                     
                 case UserDefaults.Key.useCGMAsHeartbeat :
                     bluetoothTransmitter = setupBluetoothTransmitter()
-                    
-                    providesBLEHeartbeat = UserDefaults.standard.useCGMAsHeartbeat
                     
                     setHeartbeatStateText()
                     
