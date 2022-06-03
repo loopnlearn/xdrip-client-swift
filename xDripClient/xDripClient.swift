@@ -65,24 +65,11 @@ public class xDripClient {
         shared = UserDefaults.init(suiteName: group)
     }
     
-    func fetchLast(_ n: Int) -> AnyPublisher<[Glucose], Swift.Error> {
-        
-        
-        shared.publisher
-        .retry(2)
-        .tryMap { try self.fetchLastBGs(n, $0) }
-        .map { $0.filter { $0.isStateValid } }
-        .eraseToAnyPublisher()
-        
-    }
-    
-       
-    
-    private func fetchLastBGs(_ n: Int, _ sharedParm: UserDefaults? ) throws -> Array<Glucose> {
+    public func fetchLastBGs(_ n: Int) throws -> Array<Glucose> {
         
         do
         {
-            guard let sharedData = sharedParm?.data(forKey: "latestReadings") else {
+            guard let sharedData = shared?.data(forKey: "latestReadings") else {
                 throw ClientError.fetchError
             }
         

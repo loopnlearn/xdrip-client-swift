@@ -7,9 +7,6 @@
 
 import LoopKit
 import HealthKit
-import Combine
-
-
 
 public class xDripClientManager: NSObject, CGMManager {
     
@@ -103,8 +100,6 @@ public class xDripClientManager: NSObject, CGMManager {
         }
     }
 
-    private var requestReceiver: Cancellable?
-
     public var sensorState: SensorDisplayable? {
         return latestBackfill
     }
@@ -139,15 +134,10 @@ public class xDripClientManager: NSObject, CGMManager {
             return
         }
         
-        self.requestReceiver = manager.fetchLast(60)
-        .sink(receiveCompletion: { finish in
-            switch finish {
-            case .finished: break
-            case let .failure(error):
-                self.delegate.notify { (delegate) in delegate?.cgmManager(self, didUpdateWith: .error(error)) }
-            }
-        }, receiveValue: { [weak self] glucose in
-            guard let self = self else { return }
+        do {
+            
+            let glucose = try manager.fetchLastBGs(60)
+            
             guard !glucose.isEmpty else {
                 self.delegate.notify { (delegate) in delegate?.cgmManager(self, didUpdateWith: .noData) }
                 return
@@ -213,8 +203,27 @@ public class xDripClientManager: NSObject, CGMManager {
 
             self.delegate.notify { (delegate) in delegate?.cgmManager(self, didUpdateWith: .newData(newSamples)) }
 
-        })
+        } catch let error {
+            
+            if let error = error as? ClientError {
 
+                switch error {
+                case .dataError (let text):
+                    trace("in fetchNewDataIfNeeded, failed to get readings, error = %{public}@", category: categoryxDripCGMManager, text)
+                case .fetchError:
+                    trace("in fetchNewDataIfNeeded, failed to get readings, error = fetcherror", category: categoryxDripCGMManager)
+                case .dateError:
+                    trace("in fetchNewDataIfNeeded, failed to get readings, error = dateError", category: categoryxDripCGMManager)
+                }
+
+            } else {
+                trace("in fetchNewDataIfNeeded, failed to get readings", category: categoryxDripCGMManager)
+            }
+            
+            self.delegate.notify { (delegate) in delegate?.cgmManager(self, didUpdateWith: .noData) }
+            
+        }
+        
     }
     
     public var device: HKDevice? {
