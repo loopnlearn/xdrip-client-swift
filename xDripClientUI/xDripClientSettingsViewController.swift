@@ -91,7 +91,6 @@ public class xDripClientSettingsViewController: UITableViewController {
         case latestReading
         case heartbeat
         case syncToRemoveService
-        case sendIssueReport
         case delete
     }
     
@@ -122,8 +121,6 @@ public class xDripClientSettingsViewController: UITableViewController {
         case .syncToRemoveService:
             return SyncToRemoteServiceRow.allCases.count
         case .delete:
-            return 1
-        case .sendIssueReport:
             return 1
         }
     }
@@ -215,15 +212,6 @@ public class xDripClientSettingsViewController: UITableViewController {
             cell.accessoryView = shouldSyncToRemoteServiceUISwitch
             return cell
 
-        case .sendIssueReport:
-            
-            let cell = tableView.dequeueReusableCell(withIdentifier: TextButtonTableViewCell.className, for: indexPath) as! TextButtonTableViewCell
-            
-            cell.textLabel?.text = LocalizedString("Send Issue Report", comment: "Title text for the button to send issue report")
-            cell.textLabel?.textAlignment = .center
-            cell.isEnabled = true
-            return cell
-            
         }
     }
     
@@ -246,8 +234,6 @@ public class xDripClientSettingsViewController: UITableViewController {
             return nil
         case .heartbeat:
             return LocalizedString("Heartbeat", comment: "Section title for heartbeat info")
-        case .sendIssueReport:
-            return nil
         case .syncToRemoveService:
             return LocalizedString("Sync", comment: "Section title for sync to remote service section")
         }
@@ -275,31 +261,6 @@ public class xDripClientSettingsViewController: UITableViewController {
         case .syncToRemoveService:
             break
             
-        case .sendIssueReport:
-            
-            // check if iOS device can send email, this depends of an email account is configured
-            if MFMailComposeViewController.canSendMail() {
-
-                let mail = MFMailComposeViewController()
-                mail.mailComposeDelegate = self
-            
-                mail.setToRecipients([ConstantsxDripClient.traceFileDestinationAddress])
-                mail.setMessageBody("Problem Description: ", isHTML: true)
-                
-                // add all trace files as attachment
-                let traceFilesInData = Trace.getTraceFilesInData()
-                for (index, traceFileInData) in traceFilesInData.0.enumerated() {
-                    mail.addAttachmentData(traceFileInData as Data, mimeType: "text/txt", fileName: traceFilesInData.1[index])
-                }
-                
-                present(mail, animated: true, completion: nil)
-
-            } else {
-                
-                present(UIAlertController(title: "Warning", message: "You must configure an e-mail account on your iOS device.", preferredStyle: .alert), animated: true)
-                
-            }
-
         }
     }
     
