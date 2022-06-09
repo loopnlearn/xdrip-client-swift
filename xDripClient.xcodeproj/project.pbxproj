@@ -39,7 +39,6 @@
 		2C2B10FF258A012E00F0764A /* KalmanFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C2B10FC258A012E00F0764A /* KalmanFilter.swift */; };
 		2C2B1100258A012E00F0764A /* KalmanFilterType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C2B10FD258A012E00F0764A /* KalmanFilterType.swift */; };
 		2C2B1101258A012E00F0764A /* DoubleExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C2B10FE258A012E00F0764A /* DoubleExtension.swift */; };
-		2C3A54D8258420740035CE41 /* DispatchTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C3A54D7258420740035CE41 /* DispatchTimer.swift */; };
 		4325E9CF210E6A0A00969CE5 /* HKUnit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4325E9CE210E6A0A00969CE5 /* HKUnit.swift */; };
 		4325E9D1210E6A3D00969CE5 /* TimeInterval.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4325E9D0210E6A3D00969CE5 /* TimeInterval.swift */; };
 		4325E9D3210E6ADA00969CE5 /* IdentifiableClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4325E9D2210E6ADA00969CE5 /* IdentifiableClass.swift */; };
@@ -59,6 +58,13 @@
 		43AB5127213315D300B3D58D /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 43AB5125213315D300B3D58D /* Localizable.strings */; };
 		43AB51362133177800B3D58D /* LocalizedString.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43AB51352133177800B3D58D /* LocalizedString.swift */; };
 		43AB51372133177800B3D58D /* LocalizedString.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43AB51352133177800B3D58D /* LocalizedString.swift */; };
+		F8D0949A283802A90087FFEA /* StringProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8D09499283802A90087FFEA /* StringProtocol.swift */; };
+		F8D0949C283802B10087FFEA /* URL.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8D0949B283802B10087FFEA /* URL.swift */; };
+		F8D0949E283802EB0087FFEA /* BluetoothTransmitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8D0949D283802EB0087FFEA /* BluetoothTransmitter.swift */; };
+		F8D094A4283843D60087FFEA /* UserDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8D094A3283843D60087FFEA /* UserDefaults.swift */; };
+		F8D094A7283844D30087FFEA /* Trace.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8D094A5283844D30087FFEA /* Trace.swift */; };
+		F8D094A8283844D30087FFEA /* ConstantsxDripClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8D094A6283844D30087FFEA /* ConstantsxDripClient.swift */; };
+		F8D094B8283AD2590087FFEA /* CBManagerState.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8D094B7283AD2590087FFEA /* CBManagerState.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -123,7 +129,6 @@
 		2C2B10FC258A012E00F0764A /* KalmanFilter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KalmanFilter.swift; sourceTree = "<group>"; };
 		2C2B10FD258A012E00F0764A /* KalmanFilterType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KalmanFilterType.swift; sourceTree = "<group>"; };
 		2C2B10FE258A012E00F0764A /* DoubleExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DoubleExtension.swift; sourceTree = "<group>"; };
-		2C3A54D7258420740035CE41 /* DispatchTimer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DispatchTimer.swift; sourceTree = "<group>"; };
 		2ED9939923B8E99300EFE74B /* pt */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pt; path = pt.lproj/Localizable.strings; sourceTree = "<group>"; };
 		2ED9939A23B8E99300EFE74B /* pt */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pt; path = pt.lproj/Localizable.strings; sourceTree = "<group>"; };
 		2ED993A523B8EAD800EFE74B /* vi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = vi; path = vi.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -171,6 +176,13 @@
 		43AB51302133161A00B3D58D /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/Localizable.strings; sourceTree = "<group>"; };
 		43AB51352133177800B3D58D /* LocalizedString.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalizedString.swift; sourceTree = "<group>"; };
 		43C418AE1CE0488900405B6A /* xDripClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = xDripClient.swift; sourceTree = "<group>"; };
+		F8D09499283802A90087FFEA /* StringProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StringProtocol.swift; sourceTree = "<group>"; };
+		F8D0949B283802B10087FFEA /* URL.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = URL.swift; sourceTree = "<group>"; };
+		F8D0949D283802EB0087FFEA /* BluetoothTransmitter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BluetoothTransmitter.swift; sourceTree = "<group>"; };
+		F8D094A3283843D60087FFEA /* UserDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaults.swift; sourceTree = "<group>"; };
+		F8D094A5283844D30087FFEA /* Trace.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Trace.swift; sourceTree = "<group>"; };
+		F8D094A6283844D30087FFEA /* ConstantsxDripClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConstantsxDripClient.swift; sourceTree = "<group>"; };
+		F8D094B7283AD2590087FFEA /* CBManagerState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CBManagerState.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -243,6 +255,7 @@
 		432B0E7E1CDFC3C50045347B = {
 			isa = PBXGroup;
 			children = (
+				F8D09496283802220087FFEA /* Extensions */,
 				432B0E8A1CDFC3C50045347B /* xDripClient */,
 				43AB51342133176B00B3D58D /* Common */,
 				432B0E961CDFC3C50045347B /* xDripClientTests */,
@@ -267,6 +280,7 @@
 		432B0E8A1CDFC3C50045347B /* xDripClient */ = {
 			isa = PBXGroup;
 			children = (
+				F8D0949D283802EB0087FFEA /* BluetoothTransmitter.swift */,
 				2C2B10FB258A012E00F0764A /* KalmanFilter */,
 				43C418AE1CE0488900405B6A /* xDripClient.swift */,
 				432B0E8B1CDFC3C50045347B /* xDripClient.h */,
@@ -316,10 +330,22 @@
 		43AB51342133176B00B3D58D /* Common */ = {
 			isa = PBXGroup;
 			children = (
-				2C3A54D7258420740035CE41 /* DispatchTimer.swift */,
+				F8D094A6283844D30087FFEA /* ConstantsxDripClient.swift */,
+				F8D094A5283844D30087FFEA /* Trace.swift */,
 				43AB51352133177800B3D58D /* LocalizedString.swift */,
 			);
 			path = Common;
+			sourceTree = "<group>";
+		};
+		F8D09496283802220087FFEA /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				F8D094B7283AD2590087FFEA /* CBManagerState.swift */,
+				F8D0949B283802B10087FFEA /* URL.swift */,
+				F8D09499283802A90087FFEA /* StringProtocol.swift */,
+				F8D094A3283843D60087FFEA /* UserDefaults.swift */,
+			);
+			path = Extensions;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -555,15 +581,21 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F8D094B8283AD2590087FFEA /* CBManagerState.swift in Sources */,
 				2C2B1101258A012E00F0764A /* DoubleExtension.swift in Sources */,
 				4325E9CF210E6A0A00969CE5 /* HKUnit.swift in Sources */,
 				4325E9D1210E6A3D00969CE5 /* TimeInterval.swift in Sources */,
 				27C335B82165667300CF0868 /* xDripClient.swift in Sources */,
+				F8D094A7283844D30087FFEA /* Trace.swift in Sources */,
+				F8D0949C283802B10087FFEA /* URL.swift in Sources */,
 				43A8EC9D210E68CE00A81379 /* xDripClientManager.swift in Sources */,
-				2C3A54D8258420740035CE41 /* DispatchTimer.swift in Sources */,
+				F8D094A8283844D30087FFEA /* ConstantsxDripClient.swift in Sources */,
 				2C2B1100258A012E00F0764A /* KalmanFilterType.swift in Sources */,
+				F8D0949A283802A90087FFEA /* StringProtocol.swift in Sources */,
 				43AB51362133177800B3D58D /* LocalizedString.swift in Sources */,
+				F8D094A4283843D60087FFEA /* UserDefaults.swift in Sources */,
 				43A8EC9B210E68BA00A81379 /* Glucose+GlucoseKit.swift in Sources */,
+				F8D0949E283802EB0087FFEA /* BluetoothTransmitter.swift in Sources */,
 				2C2B10FF258A012E00F0764A /* KalmanFilter.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

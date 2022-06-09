@@ -18,35 +18,58 @@ public enum ClientError: Error {
 
 public class xDripClient {
     
-    private let shared: UserDefaults?
+    public let shared: UserDefaults?
     
+    /// key for shared userdefaults - the bluetooth device address to which Loop will connect, in order to get a heartbeat
+    public static let keyForcgmTransmitterDeviceAddressInSharedUserDefaults = "cgmTransmitterDeviceAddress"
+
+    /// the mac address of the cgm to which xDrip4iOS is connecting. Nil if none defined
+    /// - set by xdrip4ios. xDripClient will need to read it regularly to check if it has changed
+    public var cgmTransmitterDeviceAddressInSharedUserDefaults: String? {
+        
+        return shared?.string(forKey: xDripClient.keyForcgmTransmitterDeviceAddressInSharedUserDefaults)
+
+    }
+
+    /// key for shared userdefaults - the service uuid of the device to which Loop will connect, in order to get a heartbeat
+    public static let keyForCgmTransmitter_CBUUID_ServiceInSharedUserDefaults = "cgmTransmitter_CBUUID_Service"
+
+    /// the service uuid of the device to which Loop will connect, in order to get a heartbeat
+    /// - set by xdrip4ios. xDripClient will need to read it regularly to check if it has changed
+    public var cgmTransmitter_CBUUID_ServiceInSharedUserDefaults: String? {
+        
+        if let service_UUID = shared?.string(forKey: xDripClient.keyForCgmTransmitter_CBUUID_ServiceInSharedUserDefaults) {
+            return service_UUID
+        } else {
+            return nil
+        }
+        
+    }
+
+    /// key for shared userdefaults - receive characteristic uuid of the device to which Loop will connect, in order to get a heartbeat
+    public static let keyForCgmTransmitter_CBUUID_ReceiveInSharedUserDefaults = "cgmTransmitter_CBUUID_Receive"
+
+    /// the receive characteristic uuid of the device to which Loop will connect, in order to get a heartbeat
+    /// - set by xdrip4ios. xDripClient will need to read it regularly to check if it has changed
+    public var cgmTransmitter_CBUUID_ReceiveInSharedUserDefaults: String? {
+        
+        if let receive_UUID = shared?.string(forKey: xDripClient.keyForCgmTransmitter_CBUUID_ReceiveInSharedUserDefaults) {
+            return receive_UUID
+        } else {
+            return nil
+        }
+        
+    }
+
     public init(_ group: String? = Bundle.main.appGroupSuiteName) {
         shared = UserDefaults.init(suiteName: group)
     }
     
-    
-    
-    
-    
-    
-    func fetchLast(_ n: Int) -> AnyPublisher<[Glucose], Swift.Error> {
-        
-        
-        shared.publisher
-        .retry(2)
-        .tryMap { try self.fetchLastBGs(n, $0) }
-        .map { $0.filter { $0.isStateValid } }
-        .eraseToAnyPublisher()
-        
-    }
-    
-       
-    
-    private func fetchLastBGs(_ n: Int, _ sharedParm: UserDefaults? ) throws -> Array<Glucose> {
+    public func fetchLastBGs(_ n: Int) throws -> Array<Glucose> {
         
         do
         {
-            guard let sharedData = sharedParm?.data(forKey: "latestReadings") else {
+            guard let sharedData = shared?.data(forKey: "latestReadings") else {
                 throw ClientError.fetchError
             }
         
